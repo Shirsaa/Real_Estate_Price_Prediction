@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Banglore Home Price Prediction</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='index.css')}}">
+	<script>
+		function SetFormValues() {
+			
+			var totalSqft = document.getElementById('uiSqft').value;
+			var location = document.getElementById('Locs').value;
+			var bhk = document.querySelector('input[name="uiBHK"]:checked').value;
+			var bathrooms = document.querySelector('input[name="uiBathrooms"]:checked').value;
+			console.log("hello");
+			
+			let formData = {
+				"Squareft": totalSqft,
+				"uiLocations": location,
+				"uiBHK": bhk,
+				"uiBathrooms": bathrooms
+    			};
+			
+			fetch("http://127.0.0.1:5000/submition", {
+				"method": 'POST',
+				"headers": {'Content-type': 'application/json'},
+				"body": JSON.stringify(formData),
+				}).then(res=>{
+                    if(res.ok){
+                        return res.json()
+                    }else{
+                        alert("something is wrong")
+                    }
+                }).then(jsonResponse=>{
+        
+                    console.log(jsonResponse)
+					document.getElementById("result").innerHTML = jsonResponse
+                } 
+                ).catch((err) => console.error(err));
+				
+		}
+	</script>
+</head>
+
+<body>
+<div class="img"></div>
+<form class="form" action="/submition" method="POST" onsubmit="return false;">
+
+	<h2>Area (Square Feet)</h2>
+    <input class="area"  type="text" id="uiSqft" class="floatLabel" name="Squareft" value="1000">
+
+	<h2>BHK</h2>
+	<p class="switch-field">
+		<input type="radio" id="radio-bhk-1" class= "BHK" name="uiBHK" value="1" />
+		<label for="radio-bhk-1">1</label>
+		<input type="radio" id="radio-bhk-2" class= "BHK" name="uiBHK" value="2" />
+		<label for="radio-bhk-2">2</label>
+		<input type="radio" id="radio-bhk-3" class= "BHK" name="uiBHK" value="3" />
+		<label for="radio-bhk-3">3</label>
+		<input type="radio" id="radio-bhk-4" class= "BHK" name="uiBHK" value="4" />
+		<label for="radio-bhk-4">4</label>
+		<input type="radio" id="radio-bhk-5" class= "BHK" name="uiBHK" value="5" />
+		<label for="radio-bhk-5">5</label>
+		
+    </p>
+
+	<h2>Bath</h2>
+	<p class="switch-field">
+		<input type="radio" id="radio-bath-1" class="bath" name="uiBathrooms" value="1" />
+		<label for="radio-bath-1">1</label>
+		<input type="radio" id="radio-bath-2" class="bath" name="uiBathrooms" value="2" />
+		<label for="radio-bath-2">2</label>
+		<input type="radio" id="radio-bath-3" class="bath" name="uiBathrooms" value="3" />
+		<label for="radio-bath-3">3</label>
+		<input type="radio" id="radio-bath-4" class="bath" name="uiBathrooms" value="4" />
+		<label for="radio-bath-4">4</label>
+		<input type="radio" id="radio-bath-5" class="bath" name="uiBathrooms" value="5" />
+		<label for="radio-bath-5">5</label>
+    </p>
+
+	<h2>Location</h2>
+	<select class="location", name="uiLocations", id="Locs">
+		{% for location in location_list %}
+		<option value = "{{ location }}">
+			{{ location }}
+		</option>
+		{% endfor %}
+	</select>
+
+	<p>
+        <button class="sub" type="submit" onclick="SetFormValues()">Estimate Price (in Lakhs)</button>
+    </p> 
+    
+    <p class="result" id="result">
+    	 
+    </p>
+
+</form>
+</body>
+</html>
